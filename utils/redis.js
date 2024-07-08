@@ -6,10 +6,13 @@ const { promisify } = require('util');
 class RedisClient {
   constructor() {
     this.client = createClient();
-    this.client.on('error', (err) => console.log(err));
-    this.connected = false;
+    this.isClientConnected = true;
+    this.client.on('error', (err) => {
+      console.error('Redis client failed to connect:', err.message || err.toString());
+      this.isClientConnected = false;
+    });
     this.client.on('connect', () => {
-      this.connected = true;
+      this.isClientConnected = true;
     });
   }
 
